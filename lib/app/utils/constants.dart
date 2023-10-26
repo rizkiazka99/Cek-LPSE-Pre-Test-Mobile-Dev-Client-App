@@ -1,19 +1,19 @@
 import 'package:ceklpse_pretest_mobiledev/app/utils/colors.dart';
 import 'package:flutter/material.dart';
 
-/* Emulator, Local BE */
+/* Emulator, Local BE 
 const baseUrl = 'http://10.0.2.2:3000/api';
 const baseUrlImg = 'http://10.0.2.2:3000/uploads/';
+*/
 
 /* Real device, Local BE - Use your own IP Address, make sure your device and server are in the same network
-const baseUrl = 'http://192.168.144.101/api';
-const baseUrlImg = 'http://192.168.144.101/uploads/';
+const baseUrl = 'http://YOURDEVICEIPADDRESS/api';
+const baseUrlImg = 'http://YOURDEVICEIPADDRESS/uploads/';
 */
 
-/* Hosted BE, TBA
-const baseUrl = '';
-const baseUrlImg = '';
-*/
+/* Hosted BE, TBA */
+const baseUrl = 'https://ceklpse-pretest.glitch.me/api';
+const baseUrlImg = 'https://ceklpse-pretest.glitch.me/uploads/';
 
 List<BoxShadow> boxShadows = [
   const BoxShadow(

@@ -27,7 +27,7 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
         alignment: AlignmentDirectional.topEnd,
         children: [
           Obx(() => Container(
-            width: 150.w,
+            width: 140.w,
             height: 150.h,
             decoration: BoxDecoration(
               color: Colors.white,

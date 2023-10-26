@@ -136,7 +136,7 @@ class HomeView extends GetView<HomeController> {
         SizedBox(height: 24.h),
         Center(
           child: CircleShimmer(
-            width: 150.w,
+            width: 140.w,
             height: 150.h,
             verticalMargin: 0,
           )
@@ -203,7 +203,7 @@ class HomeView extends GetView<HomeController> {
           onTap: () => Get.dialog(profilePictureDialog(context)),
           child: Container(
             height: 150.h,
-            width: 150.w,
+            width: 140.w,
             decoration: BoxDecoration(
               border: Border.all(
                 color: controller.profileData!.data!.profilePicture == 'https://cdn-icons-png.flaticon.com/512/5556/5556468.png'
