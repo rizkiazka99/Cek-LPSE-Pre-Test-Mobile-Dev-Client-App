@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ceklpse_pretest_mobiledev/app/data/repositories/auth/auth_repository_implementation.dart';
 import 'package:ceklpse_pretest_mobiledev/app/data/repositories/home/home_repository_implementation.dart';
 import 'package:ceklpse_pretest_mobiledev/app/domain/entities/common_entity.dart';
@@ -7,6 +9,8 @@ import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/home/delete_account
 import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/home/profile_use_case.dart';
 import 'package:ceklpse_pretest_mobiledev/app/routes/app_pages.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/colors.dart';
+import 'package:ceklpse_pretest_mobiledev/app/utils/constants.dart';
+import 'package:ceklpse_pretest_mobiledev/app/utils/global.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/helpers.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/result.dart';
 import 'package:ceklpse_pretest_mobiledev/app/widgets/bottom_sheets_and_dialogs.dart';
@@ -36,13 +40,12 @@ class HomeController extends GetxController {
   RxBool _isLoading = false.obs;
   RxBool _isError = false.obs;
   Rxn<ProfileEntity> _profileData = Rxn<ProfileEntity>();
-  RxInt _confirmationCountdown = 10.obs;
+  RxInt confirmationCountdown = 10.obs;
   RxBool isVerifyPasswordVisible = true.obs;
 
   bool get isLoading => _isLoading.value;
   bool get isError => _isError.value;
   ProfileEntity? get profileData => _profileData.value;
-  int get confirmationCountdown => _confirmationCountdown.value;
 
   set isLoading(bool isLoading) =>
       this._isLoading.value = isLoading;
@@ -50,8 +53,6 @@ class HomeController extends GetxController {
       this._isError.value = isError;
   set profileData(ProfileEntity? profileData) =>
       this._profileData.value = profileData;
-  set confirmationCountdown(int confirmationCountdown) =>
-      this._confirmationCountdown.value = confirmationCountdown;
 
   String errorMessage = '';
 
@@ -99,26 +100,19 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  handlePopupMenuClick(int item) {
-    switch(item) {
-      case 0:
-        Get.toNamed(
-          Routes.UPDATEPROFILE,
-          arguments: {
-            "id": profileData!.data!.id,
-            "email": profileData!.data!.email,
-            "username": profileData!.data!.username,
-            "profile_picture": profileData!.data!.profilePicture
-          }
-        );
-        break;
-      case 1:
-        debugPrint('This feature is under development');
-        break;
-      default:
-        debugPrint('This does nothing');
-        break;
-    }
+  deleteAccountCountdown() {
+    Timer timer;
+
+    timer = Timer.periodic(
+      const Duration(seconds: 1), 
+      (timer) { 
+        if (confirmationCountdown.value == 0) {
+          timer.cancel();
+        } else {
+          confirmationCountdown.value--;
+        }
+      }
+    );
   }
 
   Future<void> getProfile() async {
@@ -145,14 +139,43 @@ class HomeController extends GetxController {
       id: profileData!.data!.id
     );
 
+    deleteAccountCountdown();
     Get.dialog(verifyPasswordDialog(
       context: context, 
       formKey: verifyPasswordFormKey, 
       autoValidateMode: autoValidateVerifyPassword, 
       textEditingController: verifyPasswordController,
-      obscurePassword: isVerifyPasswordVisible, 
-      onVerifyTap: () {
-        
+      obscurePassword: isVerifyPasswordVisible,
+      username: profileData!.data!.username,
+      title: 'Delete Account',
+      description: 'Are you sure you want to delete your account? This action is irreversible and if you are, please verify your password after the timer reaches zero.',
+      image: deleteAccountIllustration,
+      useTimer: true,
+      timer: confirmationCountdown,
+      onVerifyTap: () async {
+        Get.back();
+
+        loaderDialog(
+          loaderIcon: const SpinKitRing(color: AppColors.primaryColor),
+          message: 'Please wait...'
+        );
+        deleteAccount = DeleteAccountUseCase(homeRepository: HomeRepositoryImplementation());
+        result = await deleteAccount.call(params);
+
+        if (result.status is Success) {
+          localStorage.erase();
+          Get.offAllNamed(Routes.AUTH);
+          snackbar(
+            title: 'Yay!', 
+            message: result.data.message
+          );
+        } else {
+          Get.back();
+          snackbar(
+            title: 'Yay!', 
+            message: result.message
+          );
+        }
       }
     ));
   }
@@ -189,5 +212,30 @@ class HomeController extends GetxController {
         Get.back();
       }
     ));
+  }
+
+  handlePopupMenuClick({
+    required BuildContext context,
+    required int item
+  }) {
+    switch(item) {
+      case 0:
+        Get.toNamed(
+          Routes.UPDATEPROFILE,
+          arguments: {
+            "id": profileData!.data!.id,
+            "email": profileData!.data!.email,
+            "username": profileData!.data!.username,
+            "profile_picture": profileData!.data!.profilePicture
+          }
+        );
+        break;
+      case 1:
+        deleteAccount(context);
+        break;
+      default:
+        debugPrint('This does nothing');
+        break;
+    }
   }
 }

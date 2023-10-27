@@ -1,4 +1,5 @@
 import 'package:ceklpse_pretest_mobiledev/app/utils/colors.dart';
+import 'package:ceklpse_pretest_mobiledev/app/utils/common_functions.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/constants.dart';
 import 'package:ceklpse_pretest_mobiledev/app/widgets/custom_button.dart';
 import 'package:ceklpse_pretest_mobiledev/app/widgets/custom_form.dart';
@@ -86,8 +87,38 @@ Widget verifyPasswordDialog({
   String? title,
   String? image,
   String? description,
-  required void Function() onVerifyTap
+  required String username,
+  required Function onVerifyTap,
+  bool useTimer = false,
+  RxInt? timer
 }) {
+  Widget nonTimedVerifyButton() {
+    return CustomButton(
+      onPressed: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+        verifyPassword(
+          verifyPasswordFormKey: formKey, 
+          autoValidateVerifyPassword: autoValidateMode, 
+          verifyPasswordController: textEditingController, 
+          username: username, 
+          successAction: () async {
+            onVerifyTap();
+          }
+        );
+      }, 
+      text: 'Verify'
+    );
+  }
+
+  Widget timedVerifyButton() {
+    return Obx(() => CustomButton(
+      onPressed: () {}, 
+      text: 'Verify (${timer!.value})',
+      color: AppColors.contextGrey.withOpacity(0.1),
+    ));
+  }
+  
+
   return Container(
     margin: EdgeInsets.symmetric(
       horizontal: 10.w,
@@ -171,10 +202,10 @@ Widget verifyPasswordDialog({
                 )
               ),
               SizedBox(height: 16.h),
-              CustomButton(
-                onPressed: onVerifyTap, 
-                text: 'Verify'
-              ),
+              useTimer ? Obx(() => timer!.value != 0
+                  ? timedVerifyButton()
+                  : nonTimedVerifyButton()
+              ) : nonTimedVerifyButton(),
               SizedBox(height: 8.h),
               CustomButton(
                 onPressed: () => Get.back(), 

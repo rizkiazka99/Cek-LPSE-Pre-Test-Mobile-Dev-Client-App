@@ -3,7 +3,6 @@ import 'package:ceklpse_pretest_mobiledev/app/data/repositories/updateprofile/up
 import 'package:ceklpse_pretest_mobiledev/app/domain/entities/common_entity.dart';
 import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/updateprofile/update_profile_picture_use_case.dart';
 import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/updateprofile/update_profile_use_case.dart';
-import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/updateprofile/verify_password_use_case.dart';
 import 'package:ceklpse_pretest_mobiledev/app/routes/app_pages.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/colors.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/helpers.dart';
@@ -57,7 +56,6 @@ class UpdateProfileController extends GetxController {
   bool get isProfilePictureUploaded => _isProfilePictureUploaded.value;
   bool get isPasswordVerified => _isPasswordVerified.value;
   bool get showPasswordForm => _showPasswordForm.value;
-  //bool get isVerifyPasswordVisible => _isVerifyPasswordVisible.value;
   bool get isPasswordVisible => _isPasswordVisible.value;
   bool get isConfirmPasswordVisible => _isConfirmPasswordVisible.value;
 
@@ -75,8 +73,6 @@ class UpdateProfileController extends GetxController {
       this._isPasswordVerified.value = isPasswordVerified;
   set showPasswordForm(bool showPasswordForm) =>
       this._showPasswordForm.value = showPasswordForm;
-  /*set isVerifyPasswordVisible(bool isVerifyPasswordVisible) =>
-      this._isVerifyPasswordVisible.value = isVerifyPasswordVisible;*/
   set isPasswordVisible(bool isPasswordVisible) =>
       this._isPasswordVisible.value = isPasswordVisible;
   set isConfirmPasswordVisible(bool isConfirmPasswordVisible) =>
@@ -172,42 +168,6 @@ class UpdateProfileController extends GetxController {
   void onSendProgress(int received, int total) {
     uploadProgressReceived = received;
     uploadProgressTotal = total;
-  }
-
-  Future<void> verifyPassword() async {
-    final isVerifyPasswordValid = verifyPasswordFormKey.currentState!.validate();
-
-    if (isVerifyPasswordValid) {
-      late VerifyPasswordUseCase verifyPassword;
-      late Result<CommonEntity> result;
-      VerifyPasswordParams params = VerifyPasswordParams(
-        username: initialUsername,
-        password: verifyPasswordController.text.trim()
-      );
-
-      loaderDialog(
-        loaderIcon: const SpinKitRing(color: AppColors.primaryColor),
-        message: 'Please wait...'
-      );
-      verifyPassword = VerifyPasswordUseCase(
-        updateProfileRepository: UpdateProfileRepositoryImplementation()
-      );
-      result = await verifyPassword.call(params);
-  
-      if (result.status is Success) {
-        Get.back();
-        Get.back();
-        verifyPasswordController.clear();
-        isPasswordVerified = true;
-        showPasswordForm = true;
-        snackbar(title: 'Yay!', message: result.data.message);
-      } else {
-        Get.back();
-        snackbar(title: 'Oops!', message: result.message);
-      }
-    } else {
-      autoValidateVerifyPassword = AutovalidateMode.always;
-    }
   }
 
   Future<void> uploadProfilePicture() async {

@@ -75,7 +75,10 @@ class HomeView extends GetView<HomeController> {
         } else {
           if (!controller.isError) {
             return PopupMenuButton<int>(
-              onSelected: (item) => controller.handlePopupMenuClick(item),
+              onSelected: (item) => controller.handlePopupMenuClick(
+                context: context,
+                item: item
+              ),
               itemBuilder: (context) => [
                 popupMenuItem(
                   value: 0, 
@@ -210,10 +213,13 @@ class HomeView extends GetView<HomeController> {
           thickness: 12,
         ),
         SizedBox(height: 16.h),
-        Shimmer(
-          width: MediaQuery.of(context).size.width / 0.7,
-          height: 25.h,
-          verticalMargin: 0,
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Shimmer(
+            width: MediaQuery.of(context).size.width * 0.3,
+            height: 25.h,
+            verticalMargin: 0,
+          ),
         ) 
       ]
     );

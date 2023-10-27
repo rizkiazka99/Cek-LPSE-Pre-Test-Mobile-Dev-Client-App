@@ -161,10 +161,18 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                             formKey: controller.verifyPasswordFormKey, 
                             autoValidateMode: controller.autoValidateVerifyPassword,
                             textEditingController: controller.verifyPasswordController,
-                            obscurePassword: controller.isVerifyPasswordVisible, 
+                            obscurePassword: controller.isVerifyPasswordVisible,
+                            username: controller.initialUsername, 
                             onVerifyTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              controller.verifyPassword();
+                              Get.back();
+                              Get.back();
+                              controller.verifyPasswordController.clear();
+                              controller.isPasswordVerified = true;
+                              controller.showPasswordForm = true;
+                              snackbar(
+                                title: 'Yay!', 
+                                message: "Password verified"
+                              );
                             }
                           ));
                         } else {
