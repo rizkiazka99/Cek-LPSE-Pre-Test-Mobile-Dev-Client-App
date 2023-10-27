@@ -17,7 +17,7 @@ Hasil pengerjaan "Pre-Test Mobile Dev Recruitment Cek LPSE". Aplikasi yang dibua
 
 ### Back End ([Repo](https://github.com/rizkiazka99/Cek-LPSE-Pre-Test-Mobile-Dev-Back-End) & [.env File](https://drive.google.com/file/d/1PtD635OgQ_x5qvkLN8_CC6hkeK2lleC3/view?usp=sharing))
 - Framework/Language          : Node.js & Express.js/JavaScript
-- ORM                         : Sequelize
+- Object Relational Mapping   : Sequelize
 - Database                    : PostgreSQL
 - Authentication              : Json Web Token (JWT)
 - Encryption                  : bcrypt
