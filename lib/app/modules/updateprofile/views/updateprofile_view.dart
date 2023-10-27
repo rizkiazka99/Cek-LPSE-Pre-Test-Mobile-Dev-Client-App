@@ -161,7 +161,6 @@ class UpdateProfileView extends GetView<UpdateProfileController> {
                             formKey: controller.verifyPasswordFormKey, 
                             autoValidateMode: controller.autoValidateVerifyPassword,
                             textEditingController: controller.verifyPasswordController,
-                            controller: controller, 
                             obscurePassword: controller.isVerifyPasswordVisible, 
                             onVerifyTap: () {
                               FocusManager.instance.primaryFocus?.unfocus();

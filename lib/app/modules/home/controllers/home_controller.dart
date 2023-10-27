@@ -1,12 +1,15 @@
 import 'package:ceklpse_pretest_mobiledev/app/data/repositories/auth/auth_repository_implementation.dart';
 import 'package:ceklpse_pretest_mobiledev/app/data/repositories/home/home_repository_implementation.dart';
+import 'package:ceklpse_pretest_mobiledev/app/domain/entities/common_entity.dart';
 import 'package:ceklpse_pretest_mobiledev/app/domain/entities/home/profile_entity.dart';
 import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/auth/logout_use_case.dart';
+import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/home/delete_account_use_case.dart';
 import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/home/profile_use_case.dart';
 import 'package:ceklpse_pretest_mobiledev/app/routes/app_pages.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/colors.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/helpers.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/result.dart';
+import 'package:ceklpse_pretest_mobiledev/app/widgets/bottom_sheets_and_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
@@ -26,13 +29,20 @@ class DraggableMenuModel {
 }
 
 class HomeController extends GetxController {
+  TextEditingController verifyPasswordController = TextEditingController();
+  final verifyPasswordFormKey = GlobalKey<FormState>();
+  var autoValidateVerifyPassword = AutovalidateMode.disabled;
+
   RxBool _isLoading = false.obs;
   RxBool _isError = false.obs;
   Rxn<ProfileEntity> _profileData = Rxn<ProfileEntity>();
+  RxInt _confirmationCountdown = 10.obs;
+  RxBool isVerifyPasswordVisible = true.obs;
 
   bool get isLoading => _isLoading.value;
   bool get isError => _isError.value;
   ProfileEntity? get profileData => _profileData.value;
+  int get confirmationCountdown => _confirmationCountdown.value;
 
   set isLoading(bool isLoading) =>
       this._isLoading.value = isLoading;
@@ -40,6 +50,8 @@ class HomeController extends GetxController {
       this._isError.value = isError;
   set profileData(ProfileEntity? profileData) =>
       this._profileData.value = profileData;
+  set confirmationCountdown(int confirmationCountdown) =>
+      this._confirmationCountdown.value = confirmationCountdown;
 
   String errorMessage = '';
 
@@ -83,6 +95,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
+    verifyPasswordController.dispose();
     super.onClose();
   }
 
@@ -100,7 +113,7 @@ class HomeController extends GetxController {
         );
         break;
       case 1:
-        logout();
+        debugPrint('This feature is under development');
         break;
       default:
         debugPrint('This does nothing');
@@ -123,6 +136,25 @@ class HomeController extends GetxController {
       errorMessage = result.message;
     }
     isLoading = false;
+  }
+
+  Future<void> deleteAccount(BuildContext context) async {
+    late DeleteAccountUseCase deleteAccount;
+    late Result<CommonEntity> result;
+    DeleteAccountParams params = DeleteAccountParams(
+      id: profileData!.data!.id
+    );
+
+    Get.dialog(verifyPasswordDialog(
+      context: context, 
+      formKey: verifyPasswordFormKey, 
+      autoValidateMode: autoValidateVerifyPassword, 
+      textEditingController: verifyPasswordController,
+      obscurePassword: isVerifyPasswordVisible, 
+      onVerifyTap: () {
+        
+      }
+    ));
   }
 
   logout() {

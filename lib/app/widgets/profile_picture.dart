@@ -16,7 +16,7 @@ Widget profilePicture({
           && imageUrl != 'https://cdn-icons-png.flaticon.com/512/7127/7127281.png'
               ? baseUrlImg + imageUrl
               : imageUrl,
-      fit: BoxFit.fill,
+      fit: BoxFit.cover,
       loadingBuilder: (context, child, loadingProgress) {
         return imageLoader(
           child: child,
@@ -36,7 +36,7 @@ Widget localProfilePicture({
     borderRadius: BorderRadius.circular(borderRadius),
     child: Image.file(
       image,
-      fit: BoxFit.fill
+      fit: BoxFit.cover
     )
   );
 }

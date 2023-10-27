@@ -30,3 +30,4 @@ const lightOn = 'assets/img/light-1.png';
 const lightOff = 'assets/img/light-2.png';
 const errorIllustration = 'assets/img/error.png';
 const verifyPasswordIllustration = 'assets/img/verify_password.png';
+const deleteAccountIllustration = 'assets/img/delete_account.png';

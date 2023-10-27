@@ -82,9 +82,9 @@ Widget verifyPasswordDialog({
   required GlobalKey<FormState> formKey,
   required AutovalidateMode autoValidateMode,
   required TextEditingController textEditingController,
-  required GetxController controller,
   required RxBool obscurePassword,
   String? title,
+  String? image,
   String? description,
   required void Function() onVerifyTap
 }) {
@@ -120,7 +120,7 @@ Widget verifyPasswordDialog({
             ),
             Center(
               child: Image.asset(
-                verifyPasswordIllustration,
+                image ?? verifyPasswordIllustration,
                 width: 300.w,
                 height: 200.h
               ),

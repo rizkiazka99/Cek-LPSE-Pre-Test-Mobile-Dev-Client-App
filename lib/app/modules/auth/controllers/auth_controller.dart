@@ -85,6 +85,7 @@ class AuthController extends GetxController {
 
   @override
   void onClose() {
+    scrollController.dispose();
     usernameLoginController.dispose();
     passwordLoginController.dispose();
     emailController.dispose();

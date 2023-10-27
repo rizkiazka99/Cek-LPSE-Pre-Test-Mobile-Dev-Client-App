@@ -39,7 +39,8 @@ class HomeView extends GetView<HomeController> {
         required int value,
         required IconData icon,
         Color? iconColor,
-        required String text
+        required String text,
+        Color? textColor
       }) {
         return PopupMenuItem<int>(
           value: value,
@@ -50,7 +51,16 @@ class HomeView extends GetView<HomeController> {
                 color: iconColor ?? AppColors.primaryColor,
               ),
               SizedBox(width: 8.w),
-              Text(text)
+              Text(
+                text,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(
+                      color: textColor ?? Colors.black,
+                      fontWeight: FontWeight.w500
+                    ),
+              )
             ],
           )
         );
@@ -74,9 +84,10 @@ class HomeView extends GetView<HomeController> {
                 ),
                 popupMenuItem(
                   value: 1,
-                  icon: Icons.logout_outlined,
+                  icon: Icons.delete_forever,
                   iconColor: AppColors.secondaryColor,
-                  text: 'Logout'
+                  text: 'Delete Account',
+                  textColor: AppColors.secondaryColor
                 )
               ],
               child: Padding(
@@ -172,7 +183,8 @@ class HomeView extends GetView<HomeController> {
             width: MediaQuery.of(context).size.width * 0.7,
           ),
         ),
-        Expanded(
+        SizedBox(
+          height: 255.h,
           child: GridView.builder(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -190,9 +202,20 @@ class HomeView extends GetView<HomeController> {
                 horizontalMargin: 0,
               );
             }
-          ),
-        )
-      ],
+          )
+        ),
+        SizedBox(height: 16.h),
+        Divider(
+          color: AppColors.contextGrey.withOpacity(0.1),
+          thickness: 12,
+        ),
+        SizedBox(height: 16.h),
+        Shimmer(
+          width: MediaQuery.of(context).size.width / 0.7,
+          height: 25.h,
+          verticalMargin: 0,
+        ) 
+      ]
     );
   }
 
@@ -227,7 +250,8 @@ class HomeView extends GetView<HomeController> {
     }
 
     Widget draggableMenu() {
-      return Expanded(
+      return SizedBox(
+        height: 255.h,
         child: DraggableGridViewBuilder(
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -319,8 +343,40 @@ class HomeView extends GetView<HomeController> {
           )
         ),
         SizedBox(height: 16.h),
-        draggableMenu()      
-      ],
+        draggableMenu(),
+        SizedBox(height: 16.h),
+        Divider(
+          color: AppColors.contextGrey.withOpacity(0.1),
+          thickness: 12,
+        ),
+        SizedBox(height: 16.h),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 12.w),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(100),
+            onTap: () => controller.logout(),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.logout_outlined,
+                  color: AppColors.secondaryColor,
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  'Logout',
+                  style: Theme.of(context)
+                      .textTheme
+                      .displaySmall!
+                      .copyWith(
+                        color: AppColors.secondaryColor,
+                        fontWeight: FontWeight.w600
+                      )
+                )
+              ],
+            ),
+          ),
+        )
+      ]
     );
   }
 
@@ -370,12 +426,15 @@ class HomeView extends GetView<HomeController> {
         } else {
           if (!controller.isError) {
             return SafeArea(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: loadedState(context)
+              child: RefreshIndicator(
+                onRefresh: () => controller.getProfile(),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: loadedState(context)
+                  ),
                 ),
               ),
             );

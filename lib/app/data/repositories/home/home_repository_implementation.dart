@@ -1,6 +1,9 @@
+import 'package:ceklpse_pretest_mobiledev/app/data/model/common_model.dart';
 import 'package:ceklpse_pretest_mobiledev/app/data/model/home/profile_model.dart';
+import 'package:ceklpse_pretest_mobiledev/app/domain/entities/common_entity.dart';
 import 'package:ceklpse_pretest_mobiledev/app/domain/entities/home/profile_entity.dart';
 import 'package:ceklpse_pretest_mobiledev/app/domain/repositories/home/home_repository.dart';
+import 'package:ceklpse_pretest_mobiledev/app/domain/usecase/home/delete_account_use_case.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/dio.dart';
 import 'package:ceklpse_pretest_mobiledev/app/utils/result.dart';
 import 'package:dio/dio.dart';
@@ -31,6 +34,33 @@ class HomeRepositoryImplementation extends HomeRepository {
     } catch(err) {
       debugPrint(err.toString());
       return Result.error(message: 'Unexpected error occurred');
+    }
+  }
+
+  @override
+  Future<Result<CommonEntity>> deleteAccount({
+    required DeleteAccountParams params
+  }) async {
+    String endpoint = '/users/delete_profile/${params.id}';
+
+    try {
+      final response = await _dio.delete(endpoint);
+      final deleteAccount = CommonModel.fromJson(response.data);
+
+      return Result.success(deleteAccount);
+    } on DioException catch(err) {
+      debugPrint(err.message);
+      return Result.error(
+        message: err.response != null
+            ? err.response?.data['message']
+            : 'Something went wrong',
+        code: err.response != null
+            ? err.response?.statusCode
+            : -1
+      );
+    } catch(err) {
+      debugPrint(err.toString());
+      return Result.error(message: 'Unexpected error occured');
     }
   }
 }
